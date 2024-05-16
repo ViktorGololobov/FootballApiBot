@@ -5,18 +5,17 @@ from states.lowstat_states.lowstat_main_states import LowStatMainState
 from states.lowstat_states.wins_states import LowWinsStat
 from states.main_states import UserMainCommandInfo
 from keyboards.inline.lowstat_buttons.main_buttons import button_generator_for_back
+from handlers.custom_handlers.print_info import print_info
 from collections.abc import Iterable
-from typing import Dict, List
+from typing import List
+from api.api_params import methods_endswith_list, params_dict
+from database.new_enquiry import add_new_enquiry
 
-method_endswith = '/v3/standings'
 
-params: Dict[str, int] = {
-    'league': 140,
-    'season': 2023
-}
+command = '/lowstat_champ'
 
-method_type = 'GET'
-
+method_endswith = methods_endswith_list[0]
+params = params_dict['standings_and_all_stadiums']
 result_list: List[str] = ['all', 'home', 'away']
 
 
@@ -30,31 +29,32 @@ def wins_call(call: CallbackQuery) -> None:
     :param call: обратный вызов кнопки
     """
 
-    global method_endswith
-    global params
-    global method_type
+    global command
 
     if call.data == 'all_info':
         bot.set_state(call.message.chat.id, LowWinsStat.all_wins, call.message.chat.id)
         bot.edit_message_text(
             f'Меньше всех побед:', call.message.chat.id, call.message.message_id
         )
-        wins_info = wins_stat(result_list[0], method_endswith, params, method_type)
-        wins_print(wins_info, call)
+        wins_info = wins_stat(result_list[0])
+        add_new_enquiry(call.message, command)
+        print_info(wins_info, call.message)
     elif call.data == 'home':
         bot.set_state(call.message.chat.id, LowWinsStat.home_wins, call.message.chat.id)
         bot.edit_message_text(
             f'Меньше всех побед дома:', call.message.chat.id, call.message.message_id
         )
-        wins_info = wins_stat(result_list[1], method_endswith, params, method_type)
-        wins_print(wins_info, call)
+        wins_info = wins_stat(result_list[1])
+        add_new_enquiry(call.message, command)
+        print_info(wins_info, call.message)
     elif call.data == 'away':
         bot.set_state(call.message.chat.id, LowWinsStat.away_wins, call.message.chat.id)
         bot.edit_message_text(
             f'Меньше всех побед на выезде:', call.message.chat.id, call.message.message_id
         )
-        wins_info = wins_stat(result_list[2], method_endswith, params, method_type)
-        wins_print(wins_info, call)
+        wins_info = wins_stat(result_list[2])
+        add_new_enquiry(call.message, command)
+        print_info(wins_info, call.message)
     elif call.data == 'back':
         bot.set_state(call.message.chat.id, UserMainCommandInfo.lowstat, call.message.chat.id)
         bot.edit_message_text(
@@ -63,25 +63,26 @@ def wins_call(call: CallbackQuery) -> None:
         )
 
 
-def wins_stat(result: str, api_endswith: str, parameters: Dict, api_method_type: str) -> Iterable[str]:
+def wins_stat(result: str) -> Iterable[str]:
     """
     Функция-генератор для получения количества побед. На вход получает параметр, где нужно смотреть победы (все, дома или
     на выезде) и возвращает их.
 
     :param result: параметр для поиска побед
-    :param api_endswith: запрос
-    :param parameters: параметры запроса
-    :param api_method_type: тип запроса
     :return: key, value
     :rtype: Iterable[str]
     """
 
-    response = api_request(api_endswith, parameters, api_method_type)
+    global method_endswith
+    global params
+
+    response = api_request(method_endswith, params)
     team_name = response['response'][0]['league']['standings'][0]
     wins = 0
     team_dict = dict()
+    teams = 20
 
-    for counter in range(20):
+    for counter in range(teams):
         for point in team_name[counter][result]:
             if point == 'win' and counter == 0:
                 wins = team_name[counter][result][point]
@@ -100,16 +101,3 @@ def wins_stat(result: str, api_endswith: str, parameters: Dict, api_method_type:
         if minimum == value:
             yield f'Команда: {key}\n' \
                   f'Победы: {value}'
-
-
-def wins_print(wins_data: Iterable[str], call: CallbackQuery) -> None:
-    """
-    Функция для отправки сообщений пользователю с информацией о победах.
-
-    :param wins_data: данные о победах (команда и количество побед)
-    :param call: обратный вызов кнопки
-    """
-
-    for win in wins_data:
-        bot.send_message(call.message.chat.id, win)
-

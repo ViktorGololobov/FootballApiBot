@@ -8,5 +8,5 @@ class UserMainCommandInfo(StatesGroup):
     highstat = State()
     custom = State()
     stadiums = State()
-    all_champ_statistics = State()
+    team_statistics = State()
     history = State()

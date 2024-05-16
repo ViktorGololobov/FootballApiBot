@@ -1,20 +1,21 @@
 from loader import bot
-from telebot.types import CallbackQuery, Message
+from telebot.types import CallbackQuery
 from api.football_api import api_request
 from collections.abc import Iterable
-from typing import Dict
-
-method_endswith = '/v3/teams'
-
-params: Dict[str, int] = {
-    'league': 140,
-    'season': 2023
-}
-
-method_type = 'GET'
+from typing import List
+from handlers.custom_handlers.print_info import print_info
+from api.api_params import methods_endswith_list, params_dict
+from database.new_enquiry import add_new_enquiry
 
 
-def stadium_show(call: CallbackQuery) -> None:
+command = '/stadiums'
+
+method_endswith = methods_endswith_list[1]
+params = params_dict['standings_and_all_stadiums']
+result_list: List[str] = ['all', 'home', 'away']
+
+
+def stadium_call(call: CallbackQuery) -> None:
     """
     Функция для запуска процесса отображения информации на экран пользователя. Запускается функция stadium_print
     для получения и отправки информации о командах, их стадионах и городах пользователю.
@@ -22,10 +23,13 @@ def stadium_show(call: CallbackQuery) -> None:
     :param call: обратный вызов кнопки
     """
 
+    global command
+
     bot.edit_message_text(f'Команды, их города и стадионы:', call.message.chat.id, call.message.message_id)
 
     stadium_info = stadium_gen()
-    stadium_print(stadium_info, call)
+    add_new_enquiry(call.message, command)
+    print_info(stadium_info, call.message)
 
 
 def stadium_gen() -> Iterable[str]:
@@ -35,11 +39,14 @@ def stadium_gen() -> Iterable[str]:
     :return: team, city_list
     :rtype: Iterable[str]
     """
+    global method_endswith
+    global params
 
-    response = api_request(method_endswith, params, method_type)
+    response = api_request(method_endswith, params)
     teams_n_stadiums_dict = dict()
+    teams = 20
 
-    for counter in range(20):
+    for counter in range(teams):
         team_name = response['response'][counter]['team']['name']
         stadium_name = response['response'][counter]['venue']['name']
         city = response['response'][counter]['venue']['city']
@@ -49,18 +56,3 @@ def stadium_gen() -> Iterable[str]:
         yield f'Команда: {team}\n' \
               f'Город: {city_list[0]}\n' \
               f'Стадион: {city_list[1]}'
-
-
-def stadium_print(stadium_data: Iterable[str], call: CallbackQuery):
-    """
-    Функция для вывода информации о командах, стадионах и городах на экран пользователю.
-
-    :param stadium_data: строка с командой, ее городом и стадионом
-    :param call: обратный вызов кнопки
-    """
-
-    for stadium in stadium_data:
-        bot.send_message(call.message.chat.id, stadium)
-
-
-

@@ -2,19 +2,18 @@ from loader import bot
 from telebot.types import CallbackQuery
 from api.football_api import api_request
 from collections.abc import Iterable
-from typing import Dict
-
-method_endswith = '/v3/standings'
-
-params: Dict[str, int] = {
-    'league': 140,
-    'season': 2023
-}
-
-method_type = 'GET'
+from handlers.custom_handlers.print_info import print_info
+from api.api_params import methods_endswith_list, params_dict
+from database.new_enquiry import add_new_enquiry
 
 
-def points_show(call: CallbackQuery) -> None:
+command = '/lowstat_champ'
+
+method_endswith = methods_endswith_list[0]
+params = params_dict['standings_and_all_stadiums']
+
+
+def points_call(call: CallbackQuery) -> None:
     """
     Функция для запуска процесса отображения информации на экран пользователя. Запускается функция points_print
     для получения и отправки информации об очках пользователю.
@@ -22,34 +21,34 @@ def points_show(call: CallbackQuery) -> None:
     :param call: обратный вызов кнопки
     """
 
-    global method_endswith
-    global params
-    global method_type
+    global command
 
     bot.edit_message_text(
         f'Наименьшее количество очков:', call.message.chat.id, call.message.message_id
     )
-    points_info = points_stat(method_endswith, params, method_type)
-    points_print(points_info, call)
+    points_info = points_stat()
+    add_new_enquiry(call.message, command)
+    print_info(points_info, call.message)
 
 
-def points_stat(api_endswith: str, parameters: Dict, api_method_type: str) -> Iterable[str]:
+def points_stat() -> Iterable[str]:
     """
     Функция-генератор для получения количества очков.
 
-    :param api_endswith: запрос
-    :param parameters: параметры запроса
-    :param api_method_type: тип запроса
     :return: key, value
     :rtype: Iterable[str]
     """
 
-    response = api_request(api_endswith, parameters, api_method_type)
+    global method_endswith
+    global params
+
+    response = api_request(method_endswith, params)
     team_name = response['response'][0]['league']['standings'][0]
     points = 0
     team_dict = dict()
+    teams = 20
 
-    for counter in range(20):
+    for counter in range(teams):
         for point in team_name[counter]:
             if point == 'points' and counter == 0:
                 points = team_name[counter][point]
@@ -68,15 +67,3 @@ def points_stat(api_endswith: str, parameters: Dict, api_method_type: str) -> It
         if minimum == value:
             yield f'Команда: {key}\n'\
                   f'Очки: {value}'
-
-
-def points_print(points_data: Iterable[str], call: CallbackQuery) -> None:
-    """
-    Функция для отправки сообщений пользователю с информацией об очках.
-
-    :param points_data: данные о поражениях (команда и количество поражений)
-    :param call: обратный вызов кнопки
-    """
-
-    for points in points_data:
-        bot.send_message(call.message.chat.id, points)

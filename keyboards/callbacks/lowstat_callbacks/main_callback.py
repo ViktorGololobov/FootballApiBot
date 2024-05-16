@@ -3,7 +3,7 @@ from loader import bot
 from keyboards.inline.lowstat_buttons.main_buttons import all_home_away_buttons_gen
 from states.lowstat_states.lowstat_main_states import LowStatMainState
 from states.main_states import UserMainCommandInfo
-from handlers.custom_handlers.lowstat.points import points_show
+from handlers.custom_handlers.lowstat.points import points_call
 
 
 @bot.callback_query_handler(func=lambda call: True, state=UserMainCommandInfo.lowstat)
@@ -41,5 +41,5 @@ def lowstat_callback(call: CallbackQuery) -> None:
             )
         elif call.data == 'points':
             bot.set_state(call.message.chat.id, LowStatMainState.points, call.message.chat.id)
-            points_show(call)
+            points_call(call)
 
