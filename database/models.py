@@ -1,4 +1,4 @@
-from peewee import Model, SqliteDatabase, ForeignKeyField, CharField, IntegerField, DateField, AutoField
+from peewee import Model, SqliteDatabase, ForeignKeyField, CharField, BigIntegerField, DateField, AutoField
 
 
 DB_PATH = SqliteDatabase('database.db')
@@ -16,7 +16,7 @@ class BaseModel(Model):
 class Users(BaseModel):
     """ Модель пользователя. """
 
-    user_id = IntegerField(primary_key=True)
+    user_id = BigIntegerField(primary_key=True)
     username = CharField(null=True)
     first_name = CharField(null=True)
     last_name = CharField(null=True)
