@@ -1,8 +1,9 @@
 from typing import Dict
+from .football_api import get_request_for_season
 
 
 LEAGUE = 140
-SEASON = 2023
+SEASON = get_request_for_season('https://api-football-v1.p.rapidapi.com/v3/leagues/seasons')['response'][-3]
 NAME = ''
 TEAM = int()
 
