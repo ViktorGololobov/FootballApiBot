@@ -21,6 +21,8 @@ def api_request(method_endswith: str, params: Dict) -> Dict:
     :rtype: dict
     """
 
+    global url_api
+
     url = f"{url_api}{method_endswith}"
 
     return get_request(
@@ -41,7 +43,7 @@ def get_request(url: str, params: Dict) -> Dict:
 
     try:
         response = requests.get(
-            url,
+            url=url,
             headers=headers,
             params=params,
             timeout=10
@@ -52,3 +54,12 @@ def get_request(url: str, params: Dict) -> Dict:
         print(exc)
 
 
+def get_request_for_season(url):
+    """ Функция получения отклика от API для получения года сезона. """
+
+    response = requests.get(
+        url=url,
+        headers=headers
+    )
+    if response.status_code == requests.codes.ok:
+        return response.json()
