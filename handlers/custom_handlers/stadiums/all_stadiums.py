@@ -53,6 +53,6 @@ def stadium_gen() -> Iterable[str]:
         teams_n_stadiums_dict[team_name] = [city, stadium_name]
 
     for team, city_list in sorted(teams_n_stadiums_dict.items()):
-        yield f'Команда: {team}\n' \
-              f'Город: {city_list[0]}\n' \
-              f'Стадион: {city_list[1]}'
+        yield f'\U0001F465 Команда: {team}\n' \
+              f'\U0001F3D9 Город: {city_list[0]}\n' \
+              f'\U0001F3DF Стадион: {city_list[1]}'
