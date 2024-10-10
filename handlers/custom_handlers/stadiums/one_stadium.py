@@ -37,7 +37,7 @@ def stadium_call(call: CallbackQuery) -> None:
     if call.data in team_list:
         bot.set_state(call.message.chat.id, OneStadiumStates.alaves, call.message.chat.id)
         params['name'] = call.data.title()
-        bot.edit_message_text(f'Информация по выбранной команде:', call.message.chat.id, call.message.message_id)
+        bot.edit_message_text(f'Команда, ее город и стадион:', call.message.chat.id, call.message.message_id)
         add_new_enquiry(call.message, command)
         stadium_gen(call)
     elif call.data == 'back':
@@ -63,6 +63,6 @@ def stadium_gen(call: CallbackQuery) -> None:
     team_name = response['response'][0]['team']['name']
     stadium_name = response['response'][0]['venue']['name']
     city = response['response'][0]['venue']['city']
-    bot.send_message(call.message.chat.id, f'Команда: {team_name}\n'
-                                           f'Город: {city}\n'
-                                           f'Стадион: {stadium_name}')
+    bot.send_message(call.message.chat.id, f'\U0001F465 Команда: {team_name}\n'
+                                           f'\U0001F3D9 Город: {city}\n'
+                                           f'\U0001F3DF Стадион: {stadium_name}')
