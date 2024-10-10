@@ -41,4 +41,4 @@ def button_generator(message: Message) -> None:
         alaves, almeria, athletic, atletico, barcelona, cadiz, celta, getafe, girona, granada, las_palmas, mallorca,
         osasuna, rayo_vallecano, real_betis, real_madrid, real_sociedad, sevilla, valencia, villareal
     )
-    bot.send_message(message.from_user.id, f'Нужна информация по всем стадионам или по одному?', reply_markup=keyboard)
+    bot.send_message(message.from_user.id, f'По какой команде нужна статистика?', reply_markup=keyboard)
