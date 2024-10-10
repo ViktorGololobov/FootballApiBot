@@ -14,8 +14,11 @@ def button_generator(message: Message) -> None:
 
     bot.set_state(message.from_user.id, UserMainCommandInfo.stadiums, message.chat.id)
     keyboard = types.InlineKeyboardMarkup(row_width=2)
-    all_stadiums = types.InlineKeyboardButton(text='Все стадионы', callback_data='all_stadiums')
-    one_stadium = types.InlineKeyboardButton(text='Один стадион', callback_data='one_stadium')
+    all_stadiums = types.InlineKeyboardButton(
+        text='\U0001F3DF\U0001F3DF\U0001F3DF Все стадионы',
+        callback_data='all_stadiums'
+    )
+    one_stadium = types.InlineKeyboardButton(text='\U0001F3DF Один стадион', callback_data='one_stadium')
     keyboard.add(all_stadiums, one_stadium)
     bot.send_message(message.from_user.id, f'Нужна информация по всем стадионам или по одному?', reply_markup=keyboard)
 
@@ -28,7 +31,10 @@ def button_generator_for_back() -> types:
     """
 
     keyboard = types.InlineKeyboardMarkup(row_width=2)
-    all_stadiums = types.InlineKeyboardButton(text='Все стадионы', callback_data='all_stadiums')
-    one_stadium = types.InlineKeyboardButton(text='Один стадион', callback_data='one_stadium')
+    all_stadiums = types.InlineKeyboardButton(
+        text='\U0001F3DF\U0001F3DF\U0001F3DF Все стадионы',
+        callback_data='all_stadiums'
+    )
+    one_stadium = types.InlineKeyboardButton(text='\U0001F3DF Один стадион', callback_data='one_stadium')
     keyboard.add(all_stadiums, one_stadium)
     return keyboard

@@ -25,13 +25,13 @@ def handle_start(message: Message):
                 message_text=message_text,
                 date=date
             )
-        bot.send_message(message.from_user.id, 'Добро пожаловать!\n'
+        bot.send_message(message.from_user.id, 'Добро пожаловать!\U0001F44B\n'
                                                'Это бот для получения статистики по чемпионату Испании по футболу.\n'
                                                'Информация выдается по высшей лиге текущего сезона.\n'
                                                'Для информации о командах бота введите /help или воспользуйтесь '
                                                'меню слева от строки для ввода сообщения.')
     except IntegrityError:
-        bot.send_message(message.from_user.id, f'Здравствуйте, {first_name}!\n'
+        bot.send_message(message.from_user.id, f'Здравствуйте, {first_name}!\U0001F44B\n'
                                                f'Если нужна информация о командах бота, введите /help.\n'
                                                f'Если знаете нужную команду, то можете ввести ее или воспользоваться '
                                                f'меню слева от строки для ввода сообщения.')
