@@ -36,7 +36,7 @@ team_dict: Dict[str, int] = {
 }
 
 
-@bot.callback_query_handler(func=lambda call:True, state=UserMainCommandInfo.team_statistics)
+@bot.callback_query_handler(func=lambda call: True, state=UserMainCommandInfo.team_statistics)
 def team_call(call: CallbackQuery) -> None:
     """
     Callback-хэндлер для реагирования на нажатие кнопки по команде team_statistics
@@ -104,16 +104,16 @@ def team_info_print(call: CallbackQuery, parameters) -> None:
     red_cards = card_search(red)
     bot.edit_message_text(
         f'Информация о выбранной команде:\n'
-        f'Команда: {team_name}\n'
-        f'Лига: {team_league}\n'
-        f'Форма: {team_form}\n'
-        f'Сыграно игр: {team_games}\n'
-        f'Победы: {team_wins}\n'
-        f'Ничьи: {team_draws}\n'
-        f'Поражения: {team_loses}\n'
-        f'Мячей забито: {team_goals_for}\n'
-        f'Мячей пропущено: {team_goals_against}\n'
-        f'Желтые карточки: {yel_cards}\n'
-        f'Красные карточки: {red_cards}',
+        f'\U0001F465 Команда: {team_name}\n'
+        f'\U0001F310 Лига: {team_league}\n'
+        f'\U0001F4C8 Форма: {team_form}\n'
+        f'\U0001F4C5 Сыграно игр: {team_games}\n'
+        f'\U0001F3C6 Победы: {team_wins}\n'
+        f'\U0001F91D Ничьи: {team_draws}\n'
+        f'\U0001F614 Поражения: {team_loses}\n'
+        f'\U000026BD Мячей забито: {team_goals_for}\n'
+        f'\U0001F945 Мячей пропущено: {team_goals_against}\n'
+        f'\U0001F7E8 Желтые карточки: {yel_cards}\n'
+        f'\U0001F7E5 Красные карточки: {red_cards}',
         call.message.chat.id, call.message.message_id
     )
